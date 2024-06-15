@@ -1,0 +1,48 @@
+#container {
+   display: grid;
+   grid-gap: 10px;
+   grid-template-columns: fit-content(10%) auto fit-content(10%);
+}
+label[for="name"] {
+   grid-column: 1;
+   grid-row   : 1;
+}
+#name {
+   grid-column: 2;
+   grid-row   : 1;
+}
+label[for="date"] {
+   grid-column: 1;
+   grid-row   : 2;
+}
+#date {
+   grid-column: 2 / span 2;
+   grid-row   : 2;
+}
+label[for="place"] {
+   grid-column: 1;
+   grid-row   : 3;
+}
+#place {
+   grid-column: 2 / span 2;
+   grid-row   : 3;
+}
+label[for="federation"] {
+   grid-column: 1;
+   grid-row   : 4;
+}
+#federation {
+   grid-column: 2 / span 2;
+   grid-row   : 4;
+}
+label[for="text"] {
+   grid-column: 1;
+   grid-row   : 5;
+}
+#text {
+   grid-column: 2 / span 2;
+   grid-row   : 5;
+   border     : 1px solid gray;
+   max-height : 670px;
+   overflow-y : scroll;
+}

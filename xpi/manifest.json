@@ -1,0 +1,33 @@
+{
+   "manifest_version"         : 2,
+   "name"                     : "PAP Analysis",
+   "description"              : "Extract information from email and attached PDF message, writing a text file with results.",
+   "version"                  : "1.0",
+   "author"                   : "Aubin Mahé <aubin.mahe@gmail.com>",
+   "browser_specific_settings": {
+      "gecko": {
+         "id": "pap.analysis@hpms.org",
+         "strict_min_version": "115.0"
+      }
+   },
+   "message_display_action": {
+      "default_title": "Analyse PAP",
+      "default_icon" : "images/pap-32px.png"
+   },
+   "background": {
+     "scripts": [
+       "src/main.js"
+     ]
+   },
+   "icons": {
+      "64": "images/pap-64px.png",
+      "32": "images/pap-32px.png",
+      "16": "images/pap-16px.png"
+   },
+   "permissions": [
+      "downloads",
+      "messagesRead",
+      "nativeMessaging",
+      "tabs"
+   ]
+}
