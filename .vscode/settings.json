@@ -4,6 +4,7 @@
       "mozilla",
       "openai",
       "pdftoppm",
-      "pytesseract"
+      "pytesseract",
+      "thunderbird"
    ]
 }

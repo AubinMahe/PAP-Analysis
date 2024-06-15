@@ -1,1 +1,10 @@
-/home/aubin/.mozilla/native-messaging-hosts/pap.pdf.analysis.json
+{
+   "name"              : "pap.pdf.analysis",
+   "description"       : "use OPENAI to extract information from text generated from PDF by pdf2image and pytesseract OCR.",
+   "path"              : "/home/aubin/Dev/Thunderbird/native/analyse.py",
+   "type"              : "stdio",
+   "allowed_extensions": [
+      "pap.analysis@hpms.org"
+   ]
+ }
+ 
