@@ -24,6 +24,12 @@ La seconde est un script Python 3 qui pilote ChatGPT d'OpenAI, qui travaille à 
     (PDF) -->| pdf2image |--> (PNG) -->| pytesseract |--> (TXT) -->| OpenAI |--> (JSON)
              +-----------+             +-------------+             +--------+
 
+## Installation des outils tiers
+
+    sudo apt install tesseract-ocr tesseract-ocr-fra
+    pip install pdf2image
+    pip install pytesseract
+
 ## Configuration
 
 Le fichier `pap.pdf.analysis.json` doit être placé dans le dossier `${HOME}/.mozilla/native-messaging-hosts/`.

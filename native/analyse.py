@@ -1,9 +1,11 @@
 #!/usr/bin/env -S python3 -u
 #
 """
-This script is associated to a native Mozilla extension, cf. ~/.mozilla/native-messaging-hosts/pap.pdf.analysis@hpms.org.json.
+This script is associated to a native Mozilla extension,
+cf. ~/.mozilla/native-messaging-hosts/pap.pdf.analysis@hpms.org.json.
 
-The runtime interface is driven by native Mozilla Thunderbird extension contract, cf. methods get_message and send_message of the PAP_Analysis class.
+The runtime interface is driven by native Mozilla Thunderbird extension
+contract, cf. methods get_message and send_message of the PAP_Analysis class.
 """
 import os
 import pathlib
@@ -32,7 +34,7 @@ class PAP_Analysis:
          self.eprint( f'raw_length = {raw_length}' )
          message_length = struct.unpack( '=I', raw_length)[0]
          self.eprint( f'message_length = {message_length}' )
-         message        = sys.stdin.buffer.read(message_length).decode("utf-8")
+         message = sys.stdin.buffer.read(message_length).decode("utf-8")
          self.eprint( f'message = {message}' )
          return json.loads( message )
       except:
@@ -45,7 +47,8 @@ class PAP_Analysis:
       encoded_length  = struct.pack( '=I', len( encoded_content ))
       return {
          'length' : encoded_length,
-         'content': struct.pack( str( len( encoded_content )) + "s", encoded_content )
+         'content': struct.pack( str( len( encoded_content )) + "s",
+                                 encoded_content )
       }
 
    def send_message( self, encoded_message ) -> None:
@@ -84,7 +87,8 @@ class PAP_Analysis:
       return None
 
    def extract_info_from_text( self, text: str ) -> dict:
-      """Use OpenAI ChatGPT to analyse a PAP text and extract keys information.
+      """Use OpenAI ChatGPT to analyse a PAP text and extract keys
+      information.
 
       Arguments:
          text: the PDF content to analyze.
@@ -100,17 +104,21 @@ class PAP_Analysis:
          if text:
             request = [{
                "role"   : "system",
-               "content": "Vous êtes un assistant utile qui répond en JSON. " +\
-                           "Aidez-moi à analyser une invitation à une réunion contenue dans le texte joint."
+               "content": "Vous êtes un assistant utile qui répond en " +
+                           "JSON. Aidez-moi à analyser une invitation " +
+                           "à une réunion contenue dans le texte joint."
             },{
                "role"   : "user",
                "content": [{
                   "type": "text",
                   "text":
                      "Extraire du texte suivant, " +
-                     "le lieu de la réunion de négociation du protocole d'accord préélectoral dans le champ 'place', " +
-                     "la date de cette réunion dans le champ 'date' au format JJ/MM/AAAA, " +
-                     "l'heure de cette réunion dans le champ 'timestamp' au format hh:mm:ss."
+                     "le lieu de la réunion de négociation du protocole "+
+                     "d'accord préélectoral dans le champ 'place', " +
+                     "la date de cette réunion dans le champ 'date' au "+
+                     "format JJ/MM/AAAA, " +
+                     "l'heure de cette réunion dans le champ 'timestamp' "+
+                     "au format hh:mm:ss."
                },{
                   "type": "text",
                   "text": text
