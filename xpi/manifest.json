@@ -2,7 +2,7 @@
    "manifest_version"         : 2,
    "name"                     : "PAP Analysis",
    "description"              : "Extract information from email and attached PDF message, writing a text file with results.",
-   "version"                  : "1.0",
+   "version"                  : "1.1",
    "author"                   : "Aubin Mahé <aubin.mahe@gmail.com>",
    "browser_specific_settings": {
       "gecko": {

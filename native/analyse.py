@@ -219,9 +219,11 @@ class PAP_Analysis:
                      os.mkdir( parentDir, 0o777 )
                      self.eprint( f'{parentDir} created' )
                   except:
-                     None
+                     traceback.print_exc()
                   pathlib.Path( oldPath ).rename( newPath )
                   self.eprint( f'{oldPath} renamed to {newPath}' )
+               else:
+                  self.eprint( f"{basename} doesn't end by .pdf!" )
          except Exception:
             traceback.print_exc()
 

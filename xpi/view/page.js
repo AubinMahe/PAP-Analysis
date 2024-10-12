@@ -1,9 +1,12 @@
 function rename_PDF_file() {
+   const path = document.getElementById( "path" ).value;
+   const name = document.getElementById( "name" ).value;
    browser.runtime.sendMessage(
       "pap.analysis@hpms.org",
       {
          action: "rename",
-         name  : document.getElementById( "name" ).value
+         path  : path,
+         name  : name,
       }
    ).then(
       nfo => {console.log  ( nfo )},

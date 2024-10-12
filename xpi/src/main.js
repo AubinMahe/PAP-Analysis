@@ -16,8 +16,8 @@ async function getFederationAddress( id ) {
       }
       else {
          // On cherche la prochaine ligne vide
-         const end       = rawMsg.indexOf( "\r\n\r\n", toNdx );
-         const to        = rawMsg.slice( toNdx + 3, end );
+         const end = rawMsg.indexOf( "\r\n\r\n", toNdx );
+         const to  = rawMsg.slice( toNdx + 3, end );
          // On enlève les caractères de sauts de ligne (CR, LF) et on découpe aux virgules
          // pour constituer un tableau d'adresses composé normalement de deux adresses :
          // celle de l'UL et celle de la fédération concernée par le PAP
@@ -40,21 +40,15 @@ const escapeTextForHtml = ( unsafe ) => {
       .replaceAll( '\n', '<br/>'  );
 }
 
-var current_pdf = {
-   path: undefined,
-   name: undefined
-};
-
 browser.runtime.onMessage.addListener(( request, sender, sendResponse ) => {
    console.log( "request: %o", request );
    if( request.action === "rename" ) {
       browser.runtime.sendNativeMessage(
          "pap.pdf.analysis", {
             action: "rename",
-            path  : current_pdf.path,
+            path  : request.path,
             name  : request.name
          });
-      current_pdf.path = undefined;
       sendResponse({ response: "OK" });
    }
    else {
@@ -66,45 +60,49 @@ browser.messageDisplayAction.onClicked.addListener( async( tab, info ) => {
    const messageHeader = await browser.messageDisplay.getDisplayedMessage( tab.id );
    const attachements  = await browser.messages.listAttachments( messageHeader.id );
    // S'il n'y a qu'une seule pièce-jointe
-   if( attachements.length == 1 ) {
-      const pdf = attachements[0];
+   if( attachements.length > 0 ) {
       // On extrait l'adresse e-mail de la fédération concernée
       const federation = await getFederationAddress( messageHeader.id );
       if( federation ) {
          try {
-            // On enregistre la pièce-jointe dans le répertoire de téléchargement de Thunderbird
-            const file = await browser.messages.getAttachmentFile( messageHeader.id, pdf.partName );
-            const url  = URL.createObjectURL( file );
-            const id   = await browser.downloads.download({
-               url: url,
-               filename: file.name,
-               conflictAction: "overwrite",
-               saveAs: false
-            });
-            const downloaded = await browser.downloads.search({id: id});
-            current_pdf.path = downloaded[0].filename;
-            // On lance l'OCR tesseract sur l'image produite à partir du PDF
-            const info = await browser.runtime.sendNativeMessage(
-               "pap.pdf.analysis", {
-                  action: "extract-text",
-                  path  : current_pdf.path
-               });
-            current_pdf.name = info.name;
-            // On affiche un dialogue avec les informations collectées
-            await browser.windows.create({
-               url   : "view/page.html",
-               type  : "popup",
-               width : 1200,
-               height:  900
-            });
-            const tab  = await browser.tabs.query({title: "Protocole d'Accord Pré-électoral"});
-            const code =
-              `document.getElementById( "name"       ).value     = "${escapeTextForHtml( info.date + '_' + info.name )}";
-               document.getElementById( "date"       ).value     = "${escapeTextForHtml( info.timestamp )}";
-               document.getElementById( "place"      ).value     = "${escapeTextForHtml( info.place )}";
-               document.getElementById( "federation" ).value     = "${escapeTextForHtml( federation )}";
-               document.getElementById( "text"       ).innerHTML = "${escapeTextForHtml( info.text )}";`;
-            browser.tabs.executeScript( tab.id, {code: code});
+            for( const attachement of attachements ) {
+               const ext = attachement.name.slice( -4 ).toLowerCase();
+               if( ext == ".pdf" ) {
+                  // On enregistre la pièce-jointe dans le répertoire de téléchargement de Thunderbird
+                  const file = await browser.messages.getAttachmentFile( messageHeader.id, attachement.partName );
+                  const url  = URL.createObjectURL( file );
+                  const id   = await browser.downloads.download({
+                     url: url,
+                     filename: file.name,
+                     conflictAction: "overwrite",
+                     saveAs: false
+                  });
+                  const downloaded = await browser.downloads.search({id: id});
+                  const path       = downloaded[0].filename;
+                  // On lance l'OCR tesseract sur l'image produite à partir du PDF
+                  const info = await browser.runtime.sendNativeMessage(
+                     "pap.pdf.analysis", {
+                        action: "extract-text",
+                        path  : path
+                     });
+                  // On affiche un dialogue avec les informations collectées
+                  await browser.windows.create({
+                     url   : "view/page.html",
+                     type  : "popup",
+                     width : 1200,
+                     height:  900
+                  });
+                  const tab  = await browser.tabs.query({title: "Protocole d'Accord Pré-électoral"});
+                  const code =
+                    `document.getElementById( "path"       ).value     = "${escapeTextForHtml( path )}";
+                     document.getElementById( "name"       ).value     = "${escapeTextForHtml( info.date + '_' + info.name )}";
+                     document.getElementById( "date"       ).value     = "${escapeTextForHtml( info.timestamp )}";
+                     document.getElementById( "place"      ).value     = "${escapeTextForHtml( info.place )}";
+                     document.getElementById( "federation" ).value     = "${escapeTextForHtml( federation )}";
+                     document.getElementById( "text"       ).innerHTML = "${escapeTextForHtml( info.text )}";`;
+                  browser.tabs.executeScript( tab.id, {code: code});
+               }
+            }
          }
          catch( e ) {
             console.error( e );
