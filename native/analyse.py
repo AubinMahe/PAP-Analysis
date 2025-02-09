@@ -1,5 +1,5 @@
 #!/usr/bin/env -S python3 -u
-#
+# -*- coding: utf-8 -*-
 """
 This script is associated to a native Mozilla extension,
 cf. ~/.mozilla/native-messaging-hosts/pap.pdf.analysis@hpms.org.json.
