@@ -53,15 +53,12 @@ async function getFederationAddress( id ) {
 }
 
 const escapeTextForHtml = ( unsafe ) => {
-   return unsafe
-      .replaceAll( '"' , '&quot;' )
-      .replaceAll( "'" , '&#039;' )
-      .replaceAll( '\n', '<br/>'  );
+   return unsafe ? unsafe.replaceAll( '"' , '\\"' ).replaceAll( '\n', '<br/>'  ) : '';
 }
 
 async function processEMail( id ) {
    // On extrait l'adresse e-mail de la fédération concernée
-   const federation    = await getFederationAddress( id );
+   let   federation    = await getFederationAddress( id );
    const messageHeader = await browser.messages.get( id );
    const attachements  = await browser.messages.listAttachments( id );
    if( federation ) {
@@ -94,6 +91,13 @@ async function processEMail( id ) {
                   height:  900
                });
                const tab  = await browser.tabs.query({title: "Protocole d'Accord Pré-électoral"});
+               try {
+                  const fede1 = federation.replaceAll('=','%').replaceAll('%%','%').trim();
+                  federation = decodeURIComponent( fede1 );
+               }
+               catch( e ) {
+                  console.error( e );
+               }
                const code =
                   `document.getElementById( "path"       ).value     = "${escapeTextForHtml( path )}";
                   document.getElementById( "name"       ).value     = "${escapeTextForHtml( info.date + '_' + info.name )}";

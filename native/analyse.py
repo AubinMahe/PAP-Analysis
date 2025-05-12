@@ -9,6 +9,7 @@ contract, cf. methods get_message and send_message of the PAP_Analysis class.
 """
 import os
 import pathlib
+import re
 import struct
 import sys
 import traceback
@@ -183,11 +184,12 @@ class PAP_Analysis:
                ext = name[ len( name ) - 4 : ].lower()
                self.eprint( f"ext = \"{ext}\"" )
                if ext == '.pdf':
-                  name = name[11:].strip()   # On enlève le début du nom "2024 03 05 "
-                  if( name[0:1] == "-" ):
-                     name = name[1:].strip() # On enlève le tiret et l'espace qui suit
-                  if( name[0:3] == "PAP" ):
-                     name = name[3:].strip() # On enlève "PAP" et l'espace qui suit
+                  if re.match( r"20\d\d\s\d\d\s\d\d\s", name[0:11] ):
+                     name = name[11:].strip()   # On enlève le début du nom "2024 03 05 "
+                  if( name[0:2] == "- " ):
+                     name = name[2:].strip() # On enlève le tiret et l'espace qui suit
+                  if( name[0:4] == "PAP " ):
+                     name = name[4:].strip() # On enlève "PAP" et l'espace qui suit
                   self.eprint( f"name = \"{name}\"" )
                   text = self.extract_text_from_pdf( message['path'] )
                   info = self.extract_info_from_text( text )
